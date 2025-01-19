@@ -111,13 +111,16 @@ function ControlsInstrument({ instrument }: controlsProps) {
                   />
                   <div className="flex justify-between  text-sm ">
                     {array.map((textValue: string | number, index) => (
-                      <span className={index === value[0] ? "font-bold" : ""}>
+                      <span
+                        key={index}
+                        className={index === value[0] ? "font-bold" : ""}
+                      >
                         {textValue}
                       </span>
                     ))}
                   </div>
                 </div>
-              )
+              ),
             )}
           </CardContent>
         </form>
