@@ -3,30 +3,10 @@
 
 import "./Controls.css";
 import { Html } from "@react-three/drei";
-import { Instrument, scales } from "../instrument";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Instrument } from "../instrument";
 import { useState } from "react";
-import { Button } from "./ui/button";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "./ui/slider";
 import { Label } from "./ui/label";
 
@@ -35,43 +15,6 @@ interface controlsProps {
 }
 
 function ControlsInstrument({ instrument }: controlsProps) {
-  const handleCheckboxDistortion = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log(event.target.checked);
-    event.target.checked
-      ? instrument.connectDistortion()
-      : instrument.disconnectDistortion();
-  };
-  const handleSliderDistortionLevel = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log(event.target.value);
-    instrument.setDistortionLevel(Number(event.target.value) / 100);
-  };
-  const handleCheckboxReverb = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.checked);
-    event.target.checked
-      ? instrument.connectReverb()
-      : instrument.disconnectReverb();
-  };
-  const handleSliderReverbDecay = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log(event.target.value);
-    instrument.setReverbDecay(Number(event.target.value) / 100);
-  };
-  const handleClickPlay = () => {
-    instrument.playSequence();
-  };
-  const handleClickStop = () => {
-    instrument.stopSequence();
-  };
-
-  // todo: programmatically set default option in select tags? (i.e. get from value instrument)
-  // todo: => maybe <select value or defaultValue> instead of <option selected>
-
-  const [isOpen, setIsOpen] = useState(true);
   const tempo = ["2n", "4n", "8n", "16n", "32n", "64n"];
   const scaleArray = ["Dminor", "Dpenta", "Fmajor"];
   const octaveArray = [2, 3, 4, 5, 6, 7];
