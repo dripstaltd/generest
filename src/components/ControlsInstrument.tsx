@@ -20,7 +20,15 @@ function ControlsInstrument({ instrument }: controlsProps) {
   const octaveArray = [2, 3, 4, 5, 6, 7];
   const octaveRangeArray = [0, 1, 2, 3, 4];
 
-  const [formData, setFormData] = useState({
+  interface IFormData {
+    [key: string]: {
+      title: string;
+      value: [number];
+      callback: (arg: any) => void;
+      array: Array<string | number>;
+    };
+  }
+  const [formData, setFormData] = useState<IFormData>({
     tempo: {
       title: "Tempo",
       value: [2],
@@ -59,7 +67,7 @@ function ControlsInstrument({ instrument }: controlsProps) {
     },
   });
 
-  const handleSliderChange = (value: any, key: any) => {
+  const handleSliderChange = (value: number[], key: any) => {
     setFormData((prev) => ({
       ...prev,
       [key]: { ...prev[key], value: value },
@@ -88,16 +96,18 @@ function ControlsInstrument({ instrument }: controlsProps) {
                     min={0}
                     max={array.length - 1}
                     value={value}
-                    onValueChange={(value) => handleSliderChange(value, key)}
-                    onValueCommit={(value) =>
-                      // callback()
+                    onValueChange={(value: number[]): void => {
                       console.log(
-                        "Submitted this value",
-                        array[value[0]],
-                        "of type",
-                        console.log(typeof array[value[0]])
-                      )
-                    }
+                        `onValueChange | key: ${key} | title: ${title} | array: ${array} | value: ${value} | callback: ${callback}`,
+                      );
+                      handleSliderChange(value, key);
+                    }}
+                    onValueCommit={(value: number[]): void => {
+                      console.log(
+                        `onValueCommit | key: ${key} | title: ${title} | array: ${array} | value: ${value} | callback: ${callback}`,
+                      );
+                      callback(value[0]);
+                    }}
                   />
                   <div className="flex justify-between  text-sm ">
                     {array.map((textValue: string | number, index) => (
