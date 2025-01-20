@@ -3,30 +3,10 @@
 
 import "./Controls.css";
 import { Html } from "@react-three/drei";
-import { Instrument, scales } from "../instrument";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Instrument } from "../instrument";
 import { useState } from "react";
-import { Button } from "./ui/button";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "./ui/slider";
 import { Label } from "./ui/label";
 
@@ -35,49 +15,20 @@ interface controlsProps {
 }
 
 function ControlsInstrument({ instrument }: controlsProps) {
-  const handleCheckboxDistortion = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log(event.target.checked);
-    event.target.checked
-      ? instrument.connectDistortion()
-      : instrument.disconnectDistortion();
-  };
-  const handleSliderDistortionLevel = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log(event.target.value);
-    instrument.setDistortionLevel(Number(event.target.value) / 100);
-  };
-  const handleCheckboxReverb = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.checked);
-    event.target.checked
-      ? instrument.connectReverb()
-      : instrument.disconnectReverb();
-  };
-  const handleSliderReverbDecay = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log(event.target.value);
-    instrument.setReverbDecay(Number(event.target.value) / 100);
-  };
-  const handleClickPlay = () => {
-    instrument.playSequence();
-  };
-  const handleClickStop = () => {
-    instrument.stopSequence();
-  };
-
-  // todo: programmatically set default option in select tags? (i.e. get from value instrument)
-  // todo: => maybe <select value or defaultValue> instead of <option selected>
-
-  const [isOpen, setIsOpen] = useState(true);
   const tempo = ["2n", "4n", "8n", "16n", "32n", "64n"];
   const scaleArray = ["Dminor", "Dpenta", "Fmajor"];
   const octaveArray = [2, 3, 4, 5, 6, 7];
   const octaveRangeArray = [0, 1, 2, 3, 4];
 
-  const [formData, setFormData] = useState({
+  interface IFormData {
+    [key: string]: {
+      title: string;
+      value: [number];
+      callback: (arg: any) => void;
+      array: Array<string | number>;
+    };
+  }
+  const [formData, setFormData] = useState<IFormData>({
     tempo: {
       title: "Tempo",
       value: [2],
@@ -116,7 +67,7 @@ function ControlsInstrument({ instrument }: controlsProps) {
     },
   });
 
-  const handleSliderChange = (value: any, key: any) => {
+  const handleSliderChange = (value: number[], key: any) => {
     setFormData((prev) => ({
       ...prev,
       [key]: { ...prev[key], value: value },
@@ -145,26 +96,31 @@ function ControlsInstrument({ instrument }: controlsProps) {
                     min={0}
                     max={array.length - 1}
                     value={value}
-                    onValueChange={(value) => handleSliderChange(value, key)}
-                    onValueCommit={(value) =>
-                      // callback()
+                    onValueChange={(value: number[]): void => {
                       console.log(
-                        "Submitted this value",
-                        array[value[0]],
-                        "of type",
-                        console.log(typeof array[value[0]])
-                      )
-                    }
+                        `onValueChange | key: ${key} | title: ${title} | array: ${array} | value: ${value} | callback: ${callback}`,
+                      );
+                      handleSliderChange(value, key);
+                    }}
+                    onValueCommit={(value: number[]): void => {
+                      console.log(
+                        `onValueCommit | key: ${key} | title: ${title} | array: ${array} | value: ${value} | callback: ${callback}`,
+                      );
+                      callback(value[0]);
+                    }}
                   />
                   <div className="flex justify-between  text-sm ">
                     {array.map((textValue: string | number, index) => (
-                      <span className={index === value[0] ? "font-bold" : ""}>
+                      <span
+                        key={index}
+                        className={index === value[0] ? "font-bold" : ""}
+                      >
                         {textValue}
                       </span>
                     ))}
                   </div>
                 </div>
-              )
+              ),
             )}
           </CardContent>
         </form>
